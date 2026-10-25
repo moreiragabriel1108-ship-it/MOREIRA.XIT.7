@@ -29,8 +29,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import kotlinx.coroutines.delay
-import kotlin.random.Random
 
 private val Bg = Color(0xFF08090C)
 private val CardBg = Color(0xFF15171D)
@@ -51,14 +49,6 @@ class MainActivity : ComponentActivity() {
             var popupEnabled by remember { mutableStateOf(prefs.getBoolean("popup_enabled", true)) }
             var tipsEnabled by remember { mutableStateOf(prefs.getBoolean("tips_enabled", true)) }
             var compactPopups by remember { mutableStateOf(prefs.getBoolean("compact_popups", false)) }
-            var active by remember { mutableStateOf(false) }
-            var seconds by remember { mutableIntStateOf(30) }
-            var hits by remember { mutableIntStateOf(prefs.getInt("hits", 0)) }
-            var sessions by remember { mutableIntStateOf(prefs.getInt("sessions", 0)) }
-            var best by remember { mutableIntStateOf(prefs.getInt("best", 0)) }
-            var roundHits by remember { mutableIntStateOf(0) }
-            var targetX by remember { mutableFloatStateOf(.3f) }
-            var targetY by remember { mutableFloatStateOf(.3f) }
             var showPopup by remember { mutableStateOf(false) }
             var popupTitle by remember { mutableStateOf("MOREIRA7") }
             var popupMessage by remember { mutableStateOf("Configuração salva.") }
@@ -97,23 +87,7 @@ class MainActivity : ComponentActivity() {
                 catch (_: Exception) { notify("Ajuste indisponível", "Abra as Configurações do Android manualmente.") }
             }
 
-            LaunchedEffect(active) {
-                if (active) {
-                    seconds = 30
-                    roundHits = 0
-                    while (seconds > 0 && active) {
-                        delay(1000)
-                        seconds--
-                    }
-                    if (active) {
-                        active = false
-                        sessions++
-                        if (roundHits > best) best = roundHits
-                        prefs.edit().putInt("sessions", sessions).putInt("best", best).apply()
-                        notify("Rodada concluída", "Acertos: $roundHits • Recorde: $best")
-                    }
-                }
-            }
+            LaunchedEffect(Unit) { readDevice() }
 
             MaterialTheme(colorScheme = darkColorScheme(primary = Red, secondary = Green, background = Bg, surface = CardBg)) {
                 Scaffold(
@@ -150,7 +124,7 @@ class MainActivity : ComponentActivity() {
                             }
                             Text("☠", Modifier.align(Alignment.CenterEnd), color = Red, fontSize = 65.sp)
                             Text("🔥", Modifier.align(Alignment.TopEnd), fontSize = 28.sp)
-                            Text("🔥", Modifier.align(Alignment.BottomEnd), fontSize = 24.sp)
+                            Text("🔥 🩸", Modifier.align(Alignment.BottomEnd), fontSize = 24.sp)
                         }
 
                         when (tab) {
@@ -158,10 +132,14 @@ class MainActivity : ComponentActivity() {
                                 Text("PAINEL PRINCIPAL", color = Color.White, fontSize = 23.sp, fontWeight = FontWeight.Black)
                                 Text("Atalhos rápidos para preparar sua sessão de jogo.", color = Muted, fontSize = 12.sp)
                                 Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                                    Metric("ACERTOS", hits.toString(), Modifier.weight(1f))
-                                    Metric("RODADAS", sessions.toString(), Modifier.weight(1f))
-                                    Metric("RECORDE", best.toString(), Modifier.weight(1f))
+                                    Metric("RAM LIVRE", ramAvailable, Modifier.weight(1f))
+                                    Metric("RAM TOTAL", ramTotal, Modifier.weight(1f))
                                 }
+                                Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                                    Metric("TELA", refreshRate, Modifier.weight(1f))
+                                    Metric("CPU • NÚCLEOS", deviceCores.toString(), Modifier.weight(1f))
+                                }
+                                Metric("BATERIA", if (battery >= 0) "$battery%" else "—", Modifier.fillMaxWidth())
                                 Panel("PERFIL ATUAL") {
                                     Text("Sensibilidade: $sensitivity / 100", color = Color.White, fontWeight = FontWeight.Bold)
                                     Text("Perfil de capa: $capa%", color = Red, fontWeight = FontWeight.Bold)
