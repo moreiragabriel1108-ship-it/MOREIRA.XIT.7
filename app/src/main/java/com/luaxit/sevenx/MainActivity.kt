@@ -216,7 +216,11 @@ class MainActivity : ComponentActivity() {
                                     PrefRow("Pop-ups ativados", "Mostrar confirmações e resultados", popupEnabled) { popupEnabled = it; prefs.edit().putBoolean("popup_enabled", it).apply() }
                                     PrefRow("Dicas rápidas", "Mostrar instruções e sugestões", tipsEnabled) { tipsEnabled = it; prefs.edit().putBoolean("tips_enabled", it).apply() }
                                     PrefRow("Pop-up compacto", "Usar textos curtos nas mensagens", compactPopups) { compactPopups = it; prefs.edit().putBoolean("compact_popups", it).apply() }
-                                    Button(onClick = { notify("Teste de pop-up", if (compactPopups) "MOREIRA7 • Aviso de teste" else "Se você está vendo esta janela, os pop-ups internos estão ativos.") }, modifier = Modifier.fillMaxWidth()) { Text("TESTAR POP-UP") }
+                                    Button(onClick = {
+                                        popupTitle = "Teste de pop-up"
+                                        popupMessage = if (compactPopups) "MOREIRA7 • Aviso de teste" else "Se você está vendo esta janela, os pop-ups internos estão ativos."
+                                        showPopup = true
+                                    }, modifier = Modifier.fillMaxWidth()) { Text("TESTAR POP-UP") }
                                 }
                                 Panel("AÇÕES RÁPIDAS") {
                                     ActionButton("Resumo do perfil", "Ver os valores salvos") { notify("Perfil salvo", "Sensibilidade $sensitivity/100 • Capa $capa%") }
