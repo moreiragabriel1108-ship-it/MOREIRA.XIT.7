@@ -29,6 +29,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.viewinterop.AndroidView
 
 private val Bg = Color(0xFF08090C)
 private val CardBg = Color(0xFF15171D)
@@ -94,8 +95,8 @@ class MainActivity : ComponentActivity() {
                     containerColor = Bg,
                     bottomBar = {
                         NavigationBar(containerColor = CardBg) {
-                            val names = listOf("Painel", "Sensib.", "Otimizar", "Pop-ups", "Ajustes")
-                            val icons = listOf("◆", "◎", "ϟ", "▣", "⚙")
+                            val names = listOf("Painel", "Sensib.", "Otimizar", "Pop-ups", "Ajustes", "FF Panel")
+                            val icons = listOf("◆", "◎", "ϟ", "▣", "⚙", "☠")
                             names.forEachIndexed { i, name ->
                                 NavigationBarItem(
                                     selected = tab == i, onClick = { tab = i },
@@ -227,7 +228,20 @@ class MainActivity : ComponentActivity() {
                                     ActionButton("Resumo do aparelho", "Consultar leitura atual") { readDevice(); notify("Estado do aparelho", "RAM livre $ramAvailable de $ramTotal • Tela $refreshRate • Bateria $battery%") }
                                 }
                             }
-                            else -> {
+                            5 -> {
+                                AndroidView(
+                                    factory = { viewContext ->
+                                        android.webkit.WebView(viewContext).apply {
+                                            settings.javaScriptEnabled = true
+                                            settings.domStorageEnabled = true
+                                            setBackgroundColor(android.graphics.Color.rgb(8, 9, 12))
+                                            loadUrl("file:///android_asset/panel.html")
+                                        }
+                                    },
+                                    modifier = Modifier.fillMaxWidth().height(620.dp)
+                                )
+                            }
+                            4 -> {
                                 Text("AJUSTES", color = Color.White, fontSize = 23.sp, fontWeight = FontWeight.Black)
                                 Panel("PREFERÊNCIAS") {
                                     ActionButton("Restaurar perfil", "Sensibilidade 85 • Capa 75") {
