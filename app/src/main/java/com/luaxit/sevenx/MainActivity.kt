@@ -14,6 +14,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
@@ -31,6 +34,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         val prefs = getSharedPreferences("lua_xit", MODE_PRIVATE)
         setContent {
+            val localView = LocalView.current
+            val haptic = LocalHapticFeedback.current
             var tab by remember { mutableIntStateOf(0) }
             var sensitivity by remember { mutableIntStateOf(prefs.getInt("sensitivity", 80).coerceIn(1, 100)) }
             var targetSize by remember { mutableIntStateOf(prefs.getInt("target_size", 50).coerceIn(25, 80)) }
@@ -165,7 +170,7 @@ class MainActivity : ComponentActivity() {
                                         Column(Modifier.align(Alignment.Center), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(10.dp)) {
                                             Text("◎", color = Accent, fontSize = 54.sp)
                                             Text("Pronto para treinar?", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 18.sp)
-                                            Text("Inicie a rodada para aparecerem os alvos.", color = TextMuted, fontSize = 12.sp)
+                                            if (showGuide) Text("Inicie a rodada para aparecerem os alvos.", color = TextMuted, fontSize = 12.sp)
                                             Button(onClick = { active = true; targetX = .2f; targetY = .2f }, shape = RoundedCornerShape(12.dp)) { Text("INICIAR RODADA") }
                                         }
                                     } else {
@@ -178,6 +183,8 @@ class MainActivity : ComponentActivity() {
                                                 .background(Accent, CircleShape)
                                                 .clickable {
                                                     roundHits++
+                                                    if (sound) localView.playSoundEffect(android.view.SoundEffectConstants.CLICK)
+                                                    if (vibration) haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                                                     hits++
                                                     prefs.edit().putInt("total_hits", hits).apply()
                                                     targetX = Random.nextFloat() * .72f
