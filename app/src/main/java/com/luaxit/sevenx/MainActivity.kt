@@ -146,6 +146,11 @@ class MainActivity : ComponentActivity() {
                                     Button(onClick = { tab = 1 }, modifier = Modifier.fillMaxWidth()) { Text("EDITAR PERFIL") }
                                 }
                                 Panel("ATALHOS DE JOGO") {
+                                    ActionButton("Abrir Free Fire", "Iniciar o jogo instalado neste aparelho") {
+                                        val launch = context.packageManager.getLaunchIntentForPackage("com.dts.freefireth")
+                                            ?: context.packageManager.getLaunchIntentForPackage("com.dts.freefiremax")
+                                        if (launch != null) context.startActivity(launch) else notify("Free Fire", "Instale o jogo para usar este atalho.")
+                                    }
                                     ActionButton("Abrir configurações de tela", "Ajustar taxa de atualização e brilho") { openSettings(Settings.ACTION_DISPLAY_SETTINGS) }
                                     ActionButton("Abrir configurações de bateria", "Consultar modo de energia do aparelho") { openSettings(Settings.ACTION_BATTERY_SAVER_SETTINGS) }
                                     ActionButton("Abrir MOREIRA7 nas configurações", "Armazenamento e permissões do aplicativo") {
