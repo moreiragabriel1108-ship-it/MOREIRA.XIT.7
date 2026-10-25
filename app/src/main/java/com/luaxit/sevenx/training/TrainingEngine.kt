@@ -1,0 +1,2 @@
+package com.luaxit.sevenx.training
+class TrainingEngine { fun targets()=listOf(TrainingTarget(1,"Alvo A",8,.18f,.24f),TrainingTarget(2,"Alvo B",15,.72f,.34f,true),TrainingTarget(3,"Alvo C",22,.48f,.68f)); fun validatePrecision(v:Int)=v.coerceIn(40,100) }
