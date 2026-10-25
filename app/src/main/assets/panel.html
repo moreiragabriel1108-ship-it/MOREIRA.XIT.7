@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MOREIRA7 • FF Panel</title>
+<style>
+:root{color-scheme:dark;--red:#ff2638;--bg:#08090c;--card:#15171d;--muted:#9ba3b2}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#30070c,#08090c 60%);color:#fff;font:14px system-ui,sans-serif;padding:16px}
+header,.card{background:#15171df2;border:1px solid #392027;border-radius:16px;padding:15px;margin-bottom:12px}
+header{display:flex;align-items:center;justify-content:space-between}h1{font-size:20px;margin:0;color:var(--red)}small,.muted{color:var(--muted)}
+button{background:#262a33;color:white;border:1px solid #414652;border-radius:10px;padding:10px 12px;font-weight:700}button.primary{background:var(--red);border-color:var(--red);width:100%;padding:14px;margin-top:8px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.row{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:12px 0}input[type=range]{width:100%;accent-color:var(--red)}input[type=checkbox]{accent-color:var(--red);width:18px;height:18px}.value{color:var(--red);font-weight:800}.section{color:var(--red);font-weight:900;letter-spacing:1px;margin-bottom:10px}
+#status{margin-top:10px;text-align:center;min-height:22px;font-weight:800}#restore{display:none;position:fixed;right:12px;top:45%;z-index:9;background:var(--red);border-radius:50%;width:52px;height:52px;font-size:20px;box-shadow:0 0 20px #ff263866}
+.hidden{display:none!important}.note{font-size:11px;color:var(--muted);line-height:1.5}
+</style></head><body>
+<button id="restore" aria-label="Mostrar painel">☠</button>
+<main id="panel">
+<header><div><h1>MOREIRA7</h1><small>FF PANEL • CENTRAL DE AJUSTES</small></div><button id="hide">OCULTAR</button></header>
+<div class="card"><div class="section">CONTROLES</div>
+<div class="row"><span>Sensibilidade geral</span><b class="value" id="sensV">85</b></div><input id="sens" type="range" min="40" max="100" value="85">
+<div class="row"><span>Precisão de toque (visual)</span><b class="value" id="touchV">70</b></div><input id="touch" type="range" min="0" max="100" value="70">
+<div class="row"><span>Tamanho do painel</span><b class="value" id="sizeV">100%</b></div><input id="size" type="range" min="80" max="120" value="100">
+<div class="row"><span>Transparência</span><b class="value" id="opacityV">95%</b></div><input id="opacity" type="range" min="40" max="100" value="95">
+</div>
+<div class="card"><div class="section">AJUSTES DO APARELHO</div>
+<div class="row"><span>Modo de baixo consumo visual</span><input type="checkbox" data-setting="visual"></div>
+<div class="row"><span>Reduzir animações do painel</span><input type="checkbox" data-setting="animations"></div>
+<div class="row"><span>Alertas internos</span><input type="checkbox" checked data-setting="alerts"></div>
+<div class="row"><span>Mostrar leituras do aparelho</span><input type="checkbox" checked data-setting="readings"></div>
+<div class="grid"><button data-action="read">LER ESTADO</button><button data-action="reset">RESTAURAR</button></div>
+<p class="note">Os controles desta página alteram a interface e as preferências locais. Ajustes reais de CPU/GPU, ADB ou FPS dependem das permissões do Android e não são simulados como aplicados.</p>
+</div>
+<div class="card"><div class="section">STATUS</div><div id="status" role="status">Painel pronto.</div><button id="inject" class="primary">INJETAR / APLICAR</button><p class="note">O botão executa uma demonstração visual de 5 segundos; não injeta código no Free Fire nem ativa cheats.</p></div>
+</main>
+<script>
+const $=id=>document.getElementById(id);let timer=null,applied=false;
+const ranges=[['sens','sensV',''],['touch','touchV',''],['size','sizeV','%'],['opacity','opacityV','%']];
+function resetApply(){clearTimeout(timer);timer=null;applied=false;$('inject').classList.remove('hidden');$('inject').disabled=false;$('inject').textContent='INJETAR / APLICAR';$('status').textContent='Configuração alterada. Toque para aplicar novamente.'}
+ranges.forEach(([id,out,suffix])=>{$(id).addEventListener('input',()=>{$(out).textContent=$(id).value+suffix;resetApply()})});
+document.querySelectorAll('input[type=checkbox]').forEach(el=>el.addEventListener('change',resetApply));
+$('hide').addEventListener('click',()=>{$('panel').classList.add('hidden');$('restore').style.display='block'});
+$('restore').addEventListener('click',()=>{$('panel').classList.remove('hidden');$('restore').style.display='none';resetApply()});
+$('inject').addEventListener('click',()=>{clearTimeout(timer);$('inject').disabled=true;$('inject').textContent='AGUARDE…';$('status').textContent='Aplicando configurações locais…';timer=setTimeout(()=>{applied=true;$('status').textContent='Configurações aplicadas à interface com sucesso.';$('inject').textContent='APLICADO ✓';$('inject').disabled=false},5000)});
+document.querySelectorAll('[data-action]').forEach(btn=>btn.addEventListener('click',()=>{resetApply();if(btn.dataset.action==='reset'){ranges.forEach(([id,out,suffix])=>{$(id).value=id==='sens'?85:id==='touch'?70:id==='size'?100:95;$(out).textContent=$(id).value+suffix});document.querySelectorAll('input[type=checkbox]').forEach(el=>el.checked=el.dataset.setting==='alerts'||el.dataset.setting==='readings');$('status').textContent='Valores padrão restaurados.'}else $('status').textContent='Leitura local: navegador/painel ativo; CPU/GPU e RAM não são alteradas por HTML.'}));
+</script></body></html>
