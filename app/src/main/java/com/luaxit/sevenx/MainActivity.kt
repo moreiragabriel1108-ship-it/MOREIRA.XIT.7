@@ -5,6 +5,7 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.BatteryManager
 import android.os.Build
 import android.os.Bundle
@@ -88,7 +89,7 @@ class MainActivity : ComponentActivity() {
                 deviceStatus = if (info.lowMemory) "Memória do sistema está baixa." else "Memória do sistema dentro do estado normal."
             }
             fun openSettings(action: String) {
-                try { context.startActivity(Intent(action)) }
+                try {\n                    val intent = Intent(action)\n                    if (action == Settings.ACTION_APPLICATION_DETAILS_SETTINGS) intent.data = Uri.parse("package:${context.packageName}")\n                    context.startActivity(intent)\n                }
                 catch (_: Exception) { notify("Ajuste indisponível", "Abra as Configurações do Android manualmente.") }
             }
 
