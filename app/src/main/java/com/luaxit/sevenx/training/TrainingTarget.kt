@@ -1,0 +1,2 @@
+package com.luaxit.sevenx.training
+data class TrainingTarget(val id:Int,val name:String,val distanceMeters:Int,val x:Float,val y:Float,val behindObstacle:Boolean=false){init{require(id>=0&&distanceMeters>=0&&x in 0f..1f&&y in 0f..1f)}}
