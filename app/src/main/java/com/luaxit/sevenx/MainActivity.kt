@@ -89,7 +89,11 @@ class MainActivity : ComponentActivity() {
                 deviceStatus = if (info.lowMemory) "Memória do sistema está baixa." else "Memória do sistema dentro do estado normal."
             }
             fun openSettings(action: String) {
-                try {\n                    val intent = Intent(action)\n                    if (action == Settings.ACTION_APPLICATION_DETAILS_SETTINGS) intent.data = Uri.parse("package:${context.packageName}")\n                    context.startActivity(intent)\n                }
+                try {
+                    val intent = Intent(action)
+                    if (action == Settings.ACTION_APPLICATION_DETAILS_SETTINGS) intent.data = Uri.parse("package:${context.packageName}")
+                    context.startActivity(intent)
+                }
                 catch (_: Exception) { notify("Ajuste indisponível", "Abra as Configurações do Android manualmente.") }
             }
 
